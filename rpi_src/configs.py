@@ -1,19 +1,10 @@
 '''
 author: Jin Yuhan
 date: 2021-01-25 19:14:37
-lastTime: 2021-02-04 18:06:45
+lastTime: 2021-02-08 14:50:17
 '''
 
-ARDUINO_CONFIG = {
-    "port": "COM6",
-    # "port": "/dev/ttyS0",
-    "baudrate": 9600,
-    "timeout": 1,
-    "gravity": 9.8,
-    "float_ndigits": 4,
-    "package_flags": [0x55, 0x59],
-    "package_body_size": 30
-}
+
 
 BATCH_SIZE = 15
 LAYER_DIMS = [15, 20, 20, 20, 20, 20, 20, 20, 8]

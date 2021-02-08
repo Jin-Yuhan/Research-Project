@@ -1,7 +1,7 @@
 '''
 author: Jin Yuhan
 date: 2020-12-19 15:49:32
-lastTime: 2021-01-27 18:26:16
+lastTime: 2021-02-08 15:42:46
 '''
 
 from serial.serialutil import SerialException
@@ -52,7 +52,7 @@ if __name__ == '__main__':
                 traceback.print_exc()
             else:
                 print("[%d]" % i, end=" ")
-                debug.print_arduino_data(data)
+                print_arduino_data(data)
                 saver.write(data)
                 if i % 50 == 0:
                     saver.save(file_name)

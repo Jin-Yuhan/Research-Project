@@ -1,0 +1,9 @@
+{
+    "port": "COM6",
+    "baudrate": 9600,
+    "timeout": 1,
+    "gravity": 9.8,
+    "float_ndigits": 4,
+    "package_flags": [85, 89],
+    "package_body_size": 30
+}

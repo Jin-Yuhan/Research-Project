@@ -1,10 +1,12 @@
+# -*- coding:utf-8  -*-
+
 '''
 author: Jin Yuhan
 date: 2020-12-25 23:35:10
-lastTime: 2021-02-03 20:40:59
+lastTime: 2021-02-08 15:26:46
 '''
 
-from arduino_api.binary_reader import BinaryReader
+from arduino_api.binary import BinaryReader
 from serial import Serial
 
 class ArduinoDataReceiver(object):
@@ -76,6 +78,9 @@ class ArduinoDataReceiver(object):
         """获取是否已经打开串口。"""
         return self.__serial.isOpen()
 
+    def __round_float(self, num):
+        return round(num, self.float_ndigits)
+
     def __read_package_flag(self):
         data = self.__serial.read(1)
         
@@ -92,31 +97,22 @@ class ArduinoDataReceiver(object):
             
 
     def __package_to_list(self, package_buffer):
-        result = []
+        results = []
         reader = BinaryReader(package_buffer)
-        
-        accel = reader.read_float_many(
-            3, lambda v: round(v * 16 * self.gravity, self.float_ndigits)
-        )
-        angular_v = reader.read_float_many(
-            3, lambda v: round(v * 2000, self.float_ndigits)
-        )
-        rotation = reader.read_float_many(
-            3, lambda v: round(v * 180, self.float_ndigits)
-        )
-        left_p = reader.read_int_many(
-            3, lambda v: float(v), signed=False
-        )
-        right_p = reader.read_int_many(
-            3, lambda v: float(v), signed=False
-        )
 
-        result.extend(accel)
-        result.extend(angular_v)
-        result.extend(rotation)
-        result.extend(left_p)
-        result.extend(right_p)
-        return result
+        reader.read_float_many(3, results, 
+            lambda v: self.__round_float(v * 16 * self.gravity))
+
+        reader.read_float_many(3, results, 
+            lambda v: self.__round_float(v * 2000))
+
+        reader.read_float_many(3, results, 
+            lambda v: self.__round_float(v * 180))
+
+        reader.read_int_many(6, results, 
+            lambda v: float(v), signed=False)
+
+        return results
 
     def receive(self):
         """接收数据。

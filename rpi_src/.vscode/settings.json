@@ -1,0 +1,14 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/__pycache__": true,
+        "**/model_data": true,
+        "**/samples": true,
+        "**/train_data": true
+    },
+    "python.formatting.provider": "black"
+}

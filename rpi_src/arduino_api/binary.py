@@ -1,7 +1,9 @@
+# -*- coding:utf-8  -*-
+
 '''
 author: Jin Yuhan
 date: 2021-01-27 11:32:40
-lastTime: 2021-01-27 12:55:32
+lastTime: 2021-02-08 15:25:42
 '''
 
 class BinaryReader(object):
@@ -91,39 +93,39 @@ class BinaryReader(object):
         """
         return self.read_int(signed=True) / 32768.0
 
-    def read_int_many(self, count, decorator, signed=True):
+    def read_int_many(self, results, count, decorator, signed=True):
         """读取许多整数，并返回。
 
-        从缓冲区中读取指定数量的整数，并将索引位置向后移动，最后返回这组数。
+        从缓冲区中读取指定数量的整数，并将索引位置向后移动，最后将这组数添加到指定列表中。
 
         Args:
+            results: 用于保存结果的列表。
             count: 需要读取的整数个数。
             decorator: 每次读取一个整数都会调用的回调函数，参数为这次读取的整数，
                 其返回值将作为本次读取的最终值。
             signed: 指示该整数是否为有符号整数。
 
-        Returns:
-            一个列表，其中依次保存了从缓冲区中读取的整数。
-
         Raises:
             EOFError: 已经读取至缓冲区末端。
         """
-        return [decorator(self.read_int(signed=signed)) for _ in range(count)]
+        for _ in range(count):
+            value = decorator(self.read_int(signed=signed))
+            results.append(value)
 
-    def read_float_many(self, count, decorator):
+    def read_float_many(self, results, count, decorator):
         """读取许多浮点数，并返回。
 
-        从缓冲区中读取指定数量的浮点数，并将索引位置向后移动，最后返回这组数。
+        从缓冲区中读取指定数量的浮点数，并将索引位置向后移动，最后将这组数添加到指定列表中。
 
         Args:
+            results: 用于保存结果的列表。
             count: 需要读取的浮点数个数。
             decorator: 每次读取一个浮点数都会调用的回调函数，参数为这次读取的浮点数，
                 其返回值将作为本次读取的最终值。
 
-        Returns:
-            一个列表，其中依次保存了从缓冲区中读取的浮点数。
-
         Raises:
             EOFError: 已经读取至缓冲区末端。
         """
-        return [decorator(self.read_float()) for _ in range(count)]
+        for _ in range(count):
+            value = decorator(self.read_float())
+            results.append(value)
