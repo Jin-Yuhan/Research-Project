@@ -1,7 +1,9 @@
+# -*- coding:utf-8  -*-
+
 '''
 author: Jin Yuhan
 date: 2021-01-25 20:01:49
-lastTime: 2021-01-27 22:17:38
+lastTime: 2021-02-09 18:40:56
 '''
 
 from async_human_data_receiver import AsyncHumanDataReceiver
@@ -10,7 +12,7 @@ import configs
 
 def main():
     sample_list = []
-    receiver = AsyncHumanDataReceiver(None, **configs.ARDUINO_CONFIG)
+    receiver = AsyncHumanDataReceiver(None, **configs.arduino)
     receiver.start()
     
     while receiver.active:

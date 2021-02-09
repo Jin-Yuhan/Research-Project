@@ -3,127 +3,120 @@
 '''
 author: Jin Yuhan
 date: 2021-02-08 17:28:20
-lastTime: 2021-02-08 23:24:51
+lastTime: 2021-02-09 19:37:18
 '''
-from openal import al, alc
+
+from openal.audio_clip import AudioClip
+from openal.al import *
 
 class AudioSource(object):
     def __init__(self, **kwargs):
-        self.__source = al.ALuint(0)
-        al.alGenSources(1, self.__source)
-    #disable rolloff factor by default
-        al.alSourcef(self.__source, al.AL_ROLLOFF_FACTOR, 0)
-    #disable source relative by default
-        al.alSourcei(self.__source, al.AL_SOURCE_RELATIVE, 0)
-        al.alSourcef(self.__source, al.AL_ORIENTATION, 1)
-    #capture player state buffer
-        self.state = al.ALint(0)
-    #set internal variable tracking
-        self.volume = 1.0
-        self.pitch = 1.0
-        self.position = [0,0,0]
-        self.rolloff = 1.0
-        self.loop = False
-        self.queue = []
+        self._source = ALuint(0)
+        alGenSources(1, self._source)
+        alSourcef(self._source, AL_ROLLOFF_FACTOR, 0)
+        alSourcei(self._source, AL_SOURCE_RELATIVE, 0)
+        
+        if "clip" in kwargs:
+            self.clip = AudioClip.create_from_file(kwargs["clip"])
+        else:
+            self.clip = None
+        self.position = kwargs.get("position", [0, 0, 0])
+        self.direction = kwargs.get("direction", [0, 0, 1])
+        self.rolloff = kwargs.get("rolloff", 1.0)
+        self.loop = kwargs.get("loop", False)
+        self.pitch = kwargs.get("pitch", 1.0)
+        self.volume = kwargs.get("volume", 1.0)
 
     def __del__(self):
-        al.alDeleteSources(1, self.__source)
+        alDeleteSources(1, self._source)
 
     @property
-    def rolloff(self):
-        """Get rolloff factor, determines volume based on distance from listener."""
-        return self.__rolloff
+    def clip(self):
+        return self._clip
 
-    @rolloff.setter
-    def rolloff(self, value):
-        """Set rolloff factor, determines volume based on distance from listener."""
-        self.__rolloff = value
-        al.alSourcef(self.__source, al.AL_ROLLOFF_FACTOR, al.ALfloat(value))
-
-    @property
-    def loop(self):
-        """Get whether looping or not."""
-        return self.__loop
-    
-    @loop.setter
-    def loop(self, value):
-        """Get whether looping or not."""
-        self.__loop = value
-        al.alSourcei(self.__source, al.AL_LOOPING, value)
+    @clip.setter
+    def clip(self, value):
+        if isinstance(value, AudioClip):
+            self._clip = value
+            buffer = ALint(value.buffer.value)
+            alSourcei(self._source, AL_BUFFER, buffer)
+        elif value is None:
+            self._clip = None
+            alSourcei(self._source, AL_BUFFER, 0)
+        else:
+            raise ValueError(value)
 
     @property
     def position(self):
-        return self.__position
+        return self._position
 
     @position.setter
     def position(self, value):
-        self.__position = value
-        x, y, z = map(al.ALfloat, value)
-        al.alSource3f(self.__source, al.AL_POSITION, x, y, z)
+        self._position = value
+        x, y, z = map(float, value)
+        alSource3f(self._source, AL_POSITION, x, y, z)
+
+    @property
+    def direction(self):
+        return self._direction
+
+    @direction.setter
+    def direction(self, value):
+        self._direction = value
+        x, y, z = map(float, value)
+        alSource3f(self._source, AL_DIRECTION, x, y, z)
+
+    @property
+    def rolloff(self):
+        return self._rolloff
+
+    @rolloff.setter
+    def rolloff(self, value):
+        self._rolloff = value
+        alSourcef(self._source, AL_ROLLOFF_FACTOR, value)
+
+    @property
+    def loop(self):
+        return self._loop
+    
+    @loop.setter
+    def loop(self, value):
+        self._loop = value
+        alSourcei(self._source, AL_LOOPING, value)
 
     @property
     def pitch(self):
-        """Get pitch - 1.5-0.5 float range only."""
-        return self.__pitch
+        return self._pitch
 
     @pitch.setter
     def pitch(self, value):
-        """Set pitch - 1.5-0.5 float range only."""
-        self.__pitch = value
-        al.alSourcef(self.__source, al.AL_PITCH, al.ALfloat(value))
+        self._pitch = value
+        alSourcef(self._source, AL_PITCH, value)
 
     @property
     def volume(self):
-        """Get volume - 1.0 float range only."""
-        return self.__volume
+        return self._volume
 
     @volume.setter
     def volume(self, value):
-        """Set volume - 1.0 float range only."""
-        self.__volume = value
-        al.alSourcef(self.__source, al.AL_GAIN, al.ALfloat(value))
-
-    @property
-    def seek(self):#returns float 0.0-1.0
-        """Get current buffer length position (IE: 21000), so divide by the buffers self.length."""
-        al.alGetSourcei(self.__source, al.AL_BYTE_OFFSET, self.state)
-        return float(self.state.value) / float(self.queue[0].length)
-
-#Go straight to a set point in the sound file
-    @seek.setter
-    def seek(self,offset):#float 0.0-1.0
-        """"""
-        al.alSourcei(self.__source, al.AL_BYTE_OFFSET, int(self.queue[0].length * offset))
+        self._volume = value
+        alSourcef(self._source, AL_GAIN, value)
 
     @property
     def is_playing(self):
-        al.alGetSourcei(self.__source, al.AL_SOURCE_STATE, self.state)
-        return self.state.value == al.AL_PLAYING
-
-#queue a sound buffer
-    def add(self, sound):
-        al.alSourceQueueBuffers(self.__source, 1, sound.buffer) #self.buf
-        self.queue.append(sound)
-
-#remove a sound from the queue (detach & unqueue to properly remove)
-    def remove(self):
-        if len(self.queue) > 0:
-            al.alSourceUnqueueBuffers(self.__source, 1, self.queue[0].buffer) #self.buf
-            al.alSourcei(self.__source, al.AL_BUFFER, 0)
-            self.queue.pop(0)
+        state = ALint(0)
+        alGetSourcei(self._source, AL_SOURCE_STATE, state)
+        return state.value == AL_PLAYING
 
     def play(self):
-        al.alSourcePlay(self.__source)
+        alSourcePlay(self._source)
 
-#stop playing sound
     def stop(self):
-        al.alSourceStop(self.__source)
+        alSourceStop(self._source)
 
-#rewind player
     def rewind(self):
-        al.alSourceRewind(self.__source)
+        alSourceRewind(self._source)
 
-#pause player
     def pause(self):
-        al.alSourcePause(self.__source)
+        alSourcePause(self._source)
 

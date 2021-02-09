@@ -5,10 +5,7 @@
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true,
-        "**/__pycache__": true,
-        "**/model_data": true,
-        "**/samples": true,
-        "**/train_data": true
+        "**/__pycache__": true
     },
     "python.formatting.provider": "black"
 }

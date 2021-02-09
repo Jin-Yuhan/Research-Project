@@ -3,11 +3,12 @@
 '''
 author: Jin Yuhan
 date: 2020-12-25 23:35:10
-lastTime: 2021-02-08 15:26:46
+lastTime: 2021-02-09 18:32:12
 '''
 
-from arduino_api.binary import BinaryReader
 from serial import Serial
+from arduino_api.binary import BinaryReader
+
 
 class ArduinoDataReceiver(object):
     """表示 Arduino 数据的接收器。

@@ -3,9 +3,10 @@
 '''
 author: Jin Yuhan
 date: 2021-02-08 17:32:01
-lastTime: 2021-02-08 22:34:21
+lastTime: 2021-02-09 18:35:52
 '''
-from openal import native_impl
+
+from openal.bindings import native_impl
 from ctypes import *
 
 ALCboolean = c_char
@@ -58,64 +59,20 @@ ALC_CAPTURE_SAMPLES = 0x312
 
 @native_impl(POINTER(ALCchar), returns=POINTER(ALCdevice))
 def alcOpenDevice(devicename):
-    """This function opens a device by name.
-
-    Args:
-        devicename: a null-terminated string describing a device.
-
-    Returns:
-        Returns a pointer to the opened device. Will return NULL if a device can not be opened.
-    """
     pass
 
 @native_impl(POINTER(ALCdevice), returns=ALCboolean)
 def alcCloseDevice(device):
-    """This function closes a device by name.
-
-    Args:
-        device: a pointer to an opened device.
-
-    Returns:
-        ALC_TRUE will be returned on success or ALC_FALSE on failure. Closing a device will
-        fail if the device contains any contexts or buffers.
-    """
     pass
 
 @native_impl(POINTER(ALCdevice), POINTER(ALCint), returns=POINTER(ALCcontext))
 def alcCreateContext(device, attrlist):
-    """This function creates a context using a specified device.
-
-    Args:
-        device: a pointer to a device.
-        attrlist: a pointer to a set of attributes:
-            ALC_FREQUENCY
-            ALC_MONO_SOURCES
-            ALC_REFRESH
-            ALC_STEREO_SOURCES
-            ALC_SYNC.
-
-    Returns:
-        A pointer to the new context (NULL on failure).
-    """
     pass
 
 @native_impl(POINTER(ALCcontext), returns=ALCboolean)
 def alcMakeContextCurrent(context):
-    """This function makes a specified context the current context.
-
-    Args:
-        context: a pointer to the new context.
-
-    Returns:
-        ALC_TRUE on success, or ALC_FALSE on failure.
-    """
     pass
 
 @native_impl(POINTER(ALCcontext))
 def alcDestroyContext(context):
-    """This function destroys a context.
-
-    Args:
-        context: a pointer to the new context.
-    """
     pass
