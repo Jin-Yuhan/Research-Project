@@ -3,26 +3,22 @@
 '''
 author: Jin Yuhan
 date: 2021-02-08 17:28:20
-lastTime: 2021-02-09 19:37:18
+lastTime: 2021-02-13 19:18:20
 '''
 
-from openal.audio_clip import AudioClip
 from openal.al import *
+from openal.audio_clip import load_from_file
 
 class AudioSource(object):
     def __init__(self, **kwargs):
         self._source = ALuint(0)
         alGenSources(1, self._source)
-        alSourcef(self._source, AL_ROLLOFF_FACTOR, 0)
-        alSourcei(self._source, AL_SOURCE_RELATIVE, 0)
         
-        if "clip" in kwargs:
-            self.clip = AudioClip.create_from_file(kwargs["clip"])
-        else:
-            self.clip = None
+        self.clip = load_from_file(kwargs.get("clip", None))
+        self.source_relative = kwargs.get("source_relative", False)
         self.position = kwargs.get("position", [0, 0, 0])
         self.direction = kwargs.get("direction", [0, 0, 1])
-        self.rolloff = kwargs.get("rolloff", 1.0)
+        self.rolloff = kwargs.get("rolloff", 0)
         self.loop = kwargs.get("loop", False)
         self.pitch = kwargs.get("pitch", 1.0)
         self.volume = kwargs.get("volume", 1.0)
@@ -36,15 +32,18 @@ class AudioSource(object):
 
     @clip.setter
     def clip(self, value):
-        if isinstance(value, AudioClip):
-            self._clip = value
-            buffer = ALint(value.buffer.value)
-            alSourcei(self._source, AL_BUFFER, buffer)
-        elif value is None:
-            self._clip = None
-            alSourcei(self._source, AL_BUFFER, 0)
-        else:
-            raise ValueError(value)
+        self._clip = value
+        buffer = ALint(value.buffer.value) if value else 0
+        alSourcei(self._source, AL_BUFFER, buffer)
+
+    @property
+    def source_relative(self):
+        return self._source_relative
+
+    @source_relative.setter
+    def source_relative(self, value):
+        self._source_relative = value
+        alSourcei(self._source, AL_SOURCE_RELATIVE, value)
 
     @property
     def position(self):
@@ -119,4 +118,3 @@ class AudioSource(object):
 
     def pause(self):
         alSourcePause(self._source)
-

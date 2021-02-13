@@ -3,11 +3,10 @@
 '''
 author: Jin Yuhan
 date: 2021-02-09 20:30:49
-lastTime: 2021-02-09 22:56:46
+lastTime: 2021-02-13 21:32:38
 '''
 
 import tensorflow as tf
-import train_data as td
 
 class TFModel(object):
     def __init__(self, **kwargs):
@@ -29,6 +28,9 @@ class TFModel(object):
             in_layer = out_layer
 
         return in_tensor
+
+    def run(self, arg):
+        pass
 
     @staticmethod
     def _get_regularization_losses():
@@ -66,7 +68,7 @@ class TrainModel(TFModel):
         self._optimizer = eval(kwargs.get("optimizer"))
         self._model_save_path = kwargs.get("model_save_path")
         
-    def train(self, data):
+    def run(self, get_batch):
         x = tf.placeholder(tf.float32, [None, self._layers[0]], name="x-input")
         y = tf.placeholder(tf.float32, [None, self._layers[-1]], name="y-input")
 
@@ -90,7 +92,7 @@ class TrainModel(TFModel):
             tf.global_variables_initializer().run()
 
             for i in range(self._training_steps):
-                xs, ys = td.get_batch(data, self._batch_size)
+                xs, ys = get_batch(self._batch_size)
                 _, loss_value, step, lr = sess.run([train_op, loss, global_step, learning_rate], 
                     feed_dict={x: xs, y: ys})
 
@@ -105,7 +107,7 @@ class TestModel(TFModel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def test(self, data):
+    def run(self, get_batch):
         ckpt = tf.train.get_checkpoint_state(self._model_dir)
         if ckpt and ckpt.model_checkpoint_path:
             with tf.Graph().as_default():
@@ -123,7 +125,7 @@ class TestModel(TFModel):
                 with tf.Session() as sess:
                     saver.restore(sess, ckpt.model_checkpoint_path)
 
-                    xs, ys = td.get_batch(data, len(data))
+                    xs, ys = get_batch()
                     global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
                     accuracy_score = sess.run(accuracy, feed_dict={x:xs, y:ys})
                     print("After %s training step(s), validation accuracy=%g" % (global_step, accuracy_score))
@@ -161,6 +163,6 @@ class RuntimeModel(TFModel):
     def close(self):
         self._session.close()
 
-    def evaluate(self, data):
+    def run(self, data):
         v = self._session.run(self._prediction, feed_dict={self._x: data})
         return RuntimeModel.VALUE_MAP[v[0]]

@@ -3,7 +3,7 @@
 '''
 author: Jin Yuhan
 date: 2020-12-19 15:49:32
-lastTime: 2021-02-09 18:33:30
+lastTime: 2021-02-13 20:30:56
 '''
 
 import os
@@ -16,7 +16,6 @@ import configs
 import xlwt
 from arduino_api import *
 from serial.serialutil import SerialException
-
 
 class ExcelSaver(object):
     __EXCEL_ITEMS = [
@@ -44,7 +43,7 @@ class ExcelSaver(object):
 if __name__ == '__main__':
     saver = ExcelSaver()
     sample_name = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())
-    file_name = os.path.join(os.path.dirname(__file__), "./samples/%s.xls" % sample_name)
+    file_name = sample_name + ".xls"
     i = 0
 
     with ArduinoDataReceiver(**configs.arduino) as receiver:

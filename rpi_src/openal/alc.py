@@ -3,7 +3,7 @@
 '''
 author: Jin Yuhan
 date: 2021-02-08 17:32:01
-lastTime: 2021-02-09 18:35:52
+lastTime: 2021-02-13 18:44:08
 '''
 
 from openal.bindings import native_impl
@@ -57,6 +57,10 @@ ALC_CAPTURE_DEVICE_SPECIFIER = 0x310
 ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER = 0x311
 ALC_CAPTURE_SAMPLES = 0x312
 
+@native_impl(POINTER(ALCdevice), returns=ALCenum)
+def alcGetError(device):
+    pass
+
 @native_impl(POINTER(ALCchar), returns=POINTER(ALCdevice))
 def alcOpenDevice(devicename):
     pass
@@ -75,4 +79,8 @@ def alcMakeContextCurrent(context):
 
 @native_impl(POINTER(ALCcontext))
 def alcDestroyContext(context):
+    pass
+
+@native_impl(POINTER(ALCcontext), returns=POINTER(ALCdevice))
+def alcGetContextsDevice(context):
     pass

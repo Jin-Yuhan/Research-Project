@@ -3,30 +3,18 @@
 '''
 author: Jin Yuhan
 date: 2021-02-08 22:35:00
-lastTime: 2021-02-09 19:33:08
+lastTime: 2021-02-13 19:02:07
 '''
 
 from openal.al import *
-from openal.alc import *
 
 class AudioListener(object):
     def __init__(self, **kwargs):
-        self._device = alcOpenDevice(None)  # select the "preferred device"
-
-        if self._device:
-            self._context = alcCreateContext(self._device, None)
-            alcMakeContextCurrent(self._context)
-            
-            self.position = kwargs.get("position", [0, 0, 0])
-            self.orientation = kwargs.get("orientation", [0, 0, 1, 0, 1, 0])
-
-    def __del__(self):
-        alcMakeContextCurrent(None)
-        alcDestroyContext(self._context)
-        alcCloseDevice(self._device)
+        self.position = kwargs.get("position", [0, 0, 0])
+        self.orientation = kwargs.get("orientation", [0, 0, 1, 0, 1, 0])
 
     @property
-    def position(self):
+    def position(self) -> list:
         return self._position
 
     @position.setter
@@ -36,7 +24,7 @@ class AudioListener(object):
         alListener3f(AL_POSITION, x, y, z)
 
     @property
-    def orientation(self):
+    def orientation(self) -> list:
         return self._orientation
 
     @orientation.setter

@@ -3,7 +3,7 @@
 '''
 author: Jin Yuhan
 date: 2021-02-08 17:30:32
-lastTime: 2021-02-09 18:35:43
+lastTime: 2021-02-13 18:35:02
 '''
 
 from openal.bindings import native_impl
@@ -105,337 +105,370 @@ def alGetError():
 # Buffer Functions
 # ------------------------------------------------------------------
 
-@native_impl(ALsizei, POINTER(ALuint), get_error=alGetError)
+@native_impl(ALsizei, POINTER(ALuint))
 def alGenBuffers(n, buffers):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The buffer array isn't large enough to hold the number of buffers requested.",
-        AL_OUT_OF_MEMORY: "There is not enough memory available to generate all the buffers requested."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The buffer array isn't large enough to hold the number of buffers requested.")
+    elif error == AL_OUT_OF_MEMORY:
+        raise MemoryError("There is not enough memory available to generate all the buffers requested.")
 
-@native_impl(ALsizei, POINTER(ALuint), get_error=alGetError)
+@native_impl(ALsizei, POINTER(ALuint))
 def alDeleteBuffers(n, buffers):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_OPERATION: "The buffer is still in use and can not be deleted.",
-        AL_INVALID_NAME: "A buffer name is invalid.",
-        AL_INVALID_VALUE: "The requested number of buffers can not be deleted."
-    }
+    error = alGetError()
+    if error == AL_INVALID_OPERATION:
+        raise RuntimeError("The buffer is still in use and can not be deleted.")
+    elif error == AL_INVALID_NAME:
+        raise NameError("A buffer name is invalid.")
+    elif error == AL_INVALID_VALUE:
+        raise ValueError("The requested number of buffers can not be deleted.")
 
-@native_impl(ALuint, ALenum, POINTER(ALvoid), ALsizei, ALsizei, get_error=alGetError)
+@native_impl(ALuint, ALenum, POINTER(ALvoid), ALsizei, ALsizei)
 def alBufferData(buffer, format, data, size, freq):
-    return {
-        AL_NO_ERROR: None,
-        AL_OUT_OF_MEMORY: "There is not enough memory available to create this buffer.",
-        AL_INVALID_VALUE: "The size parameter is not valid for the format specified, the buffer is in use, or the data is a NULL pointer.",
-        AL_INVALID_ENUM: "The specified format does not exist.",
-    }
+    error = alGetError()
+    if error == AL_OUT_OF_MEMORY:
+        raise MemoryError("There is not enough memory available to create this buffer.")
+    elif error == AL_INVALID_VALUE:
+        raise ValueError("The size parameter is not valid for the format specified, the buffer is in use, or the data is a NULL pointer.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified format does not exist.")
 
 # ------------------------------------------------------------------
 # Source Functions
 # ------------------------------------------------------------------
 
-@native_impl(ALsizei, POINTER(ALuint), get_error=alGetError)
+@native_impl(ALsizei, POINTER(ALuint))
 def alGenSources(n, sources):
-    return {
-        AL_NO_ERROR: None,
-        AL_OUT_OF_MEMORY: "There is not enough memory to generate all the requested sources.",
-        AL_INVALID_VALUE: "There are not enough non-memory resources to create all the requested sources, or the array pointer is not valid.",
-        AL_INVALID_OPERATION: "There is no context to create sources in."
-    }
+    error = alGetError()
+    if error == AL_OUT_OF_MEMORY:
+        raise MemoryError("There is not enough memory to generate all the requested sources.")
+    elif error == AL_INVALID_VALUE:
+        raise ValueError("There are not enough non-memory resources to create all the requested sources, or the array pointer is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no context to create sources in.")
 
-@native_impl(ALsizei, POINTER(ALuint), get_error=alGetError)
+@native_impl(ALsizei, POINTER(ALuint))
 def alDeleteSources(n, sources):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_NAME: "At least one specified source is not valid, or an attempt is being made to delete more sources than exist. ",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_NAME:
+        raise NameError("At least one specified source is not valid, or an attempt is being made to delete more sources than exist.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, get_error=alGetError)
-def alIsSource(source):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_OPERATION: "There is no current context."
-    }
-
-@native_impl(ALuint, ALenum, ALfloat, get_error=alGetError)
+@native_impl(ALuint, ALenum, ALfloat)
 def alSourcef(source, param, value):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value given is out of range.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value given is out of range.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, ALenum, ALfloat, ALfloat, ALfloat, get_error=alGetError)
+@native_impl(ALuint, ALenum, ALfloat, ALfloat, ALfloat)
 def alSource3f(source, param, v1, v2, v3):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value given is out of range.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value given is out of range.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, ALenum, POINTER(ALfloat), get_error=alGetError)
+@native_impl(ALuint, ALenum, POINTER(ALfloat))
 def alSourcefv(source, param, values):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value given is out of range.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value given is out of range.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, ALenum, ALint, get_error=alGetError)
+@native_impl(ALuint, ALenum, ALint)
 def alSourcei(source, param, value):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value given is out of range.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value given is out of range.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, ALenum, ALint, ALint, ALint, get_error=alGetError)
+@native_impl(ALuint, ALenum, ALint, ALint, ALint)
 def alSource3i(source, param, v1, v2, v3):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value given is out of range.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value given is out of range.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, ALenum, POINTER(ALint), get_error=alGetError)
+@native_impl(ALuint, ALenum, POINTER(ALint))
 def alSourceiv(source, param, values):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value given is out of range.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value given is out of range.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, ALenum, POINTER(ALfloat), get_error=alGetError)
+@native_impl(ALuint, ALenum, POINTER(ALfloat))
 def alGetSourcef(source, pname, value):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value pointer given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value pointer given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, ALenum, POINTER(ALfloat), POINTER(ALfloat), POINTER(ALfloat), get_error=alGetError)
+@native_impl(ALuint, ALenum, POINTER(ALfloat), POINTER(ALfloat), POINTER(ALfloat))
 def alGetSource3f(source, pname, v1, v2 ,v3):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value pointer given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value pointer given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, ALenum, POINTER(ALfloat), get_error=alGetError)
+@native_impl(ALuint, ALenum, POINTER(ALfloat))
 def alGetSourcefv(source, pname, values):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value pointer given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value pointer given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, ALenum, POINTER(ALint), get_error=alGetError)
+@native_impl(ALuint, ALenum, POINTER(ALint))
 def alGetSourcei(source, pname, value):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value pointer given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value pointer given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, ALenum, POINTER(ALint), POINTER(ALint), POINTER(ALint), get_error=alGetError)
+@native_impl(ALuint, ALenum, POINTER(ALint), POINTER(ALint), POINTER(ALint))
 def alGetSource3i(source, pname, v1, v2 ,v3):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value pointer given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value pointer given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, ALenum, POINTER(ALint), get_error=alGetError)
+@native_impl(ALuint, ALenum, POINTER(ALint))
 def alGetSourceiv(source, pname, values):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value pointer given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value pointer given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, get_error=alGetError)
+@native_impl(ALuint)
 def alSourcePlay(source):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, get_error=alGetError)
+@native_impl(ALuint)
 def alSourcePause(source):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, get_error=alGetError)
+@native_impl(ALuint)
 def alSourceStop(source):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, get_error=alGetError)
+@native_impl(ALuint)
 def alSourceRewind(source):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALuint, ALsizei, POINTER(ALuint), get_error=alGetError)
+@native_impl(ALuint, ALsizei, POINTER(ALuint))
 def alSourceQueueBuffers(source, n, buffers):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_NAME: "At least one specified buffer name is not valid, or the specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context, an attempt was made to add a new buffer which is not the same format as the buffers already in the queue, or the source already has a static buffer attached."
-    }
+    error = alGetError()
+    if error == AL_INVALID_NAME:
+        raise NameError("At least one specified buffer name is not valid, or the specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context, an attempt was made to add a new buffer which is not the same format as the buffers already in the queue, or the source already has a static buffer attached.")
 
-@native_impl(ALuint, ALsizei, POINTER(ALuint), get_error=alGetError)
+@native_impl(ALuint, ALsizei, POINTER(ALuint))
 def alSourceUnqueueBuffers(source, n, buffers):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "At least one buffer can not be unqueued because it has not been processed yet.",
-        AL_INVALID_NAME: "The specified source name is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("At least one buffer can not be unqueued because it has not been processed yet.")
+    elif error == AL_INVALID_NAME:
+        raise NameError("The specified source name is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
 # ------------------------------------------------------------------
 # Listener Functions
 # ------------------------------------------------------------------
 
-@native_impl(ALenum, ALfloat, get_error=alGetError)
+@native_impl(ALenum, ALfloat)
 def alListenerf(param, value):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALenum, ALfloat, ALfloat, ALfloat, get_error=alGetError)
+@native_impl(ALenum, ALfloat, ALfloat, ALfloat)
 def alListener3f(param, v1, v2, v3):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALenum, POINTER(ALfloat), get_error=alGetError)
+@native_impl(ALenum, POINTER(ALfloat))
 def alListenerfv(param, values):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALenum, ALint, get_error=alGetError)
+@native_impl(ALenum, ALint)
 def alListeneri(param, value):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALenum, ALint, ALint, ALint, get_error=alGetError)
+@native_impl(ALenum, ALint, ALint, ALint)
 def alListener3i(param, v1, v2, v3):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALenum, POINTER(ALint), get_error=alGetError)
+@native_impl(ALenum, POINTER(ALint))
 def alListeneriv(param, values):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALenum, POINTER(ALfloat), get_error=alGetError)
+@native_impl(ALenum, POINTER(ALfloat))
 def alGetListenerf(param, value):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value pointer given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value pointer given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALenum, POINTER(ALfloat), POINTER(ALfloat), POINTER(ALfloat), get_error=alGetError)
+@native_impl(ALenum, POINTER(ALfloat), POINTER(ALfloat), POINTER(ALfloat))
 def alGetListener3f(param, v1, v2, v3):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value pointer given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value pointer given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALenum, POINTER(ALfloat), get_error=alGetError)
+@native_impl(ALenum, POINTER(ALfloat))
 def alGetListenerfv(param, values):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value pointer given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value pointer given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALenum, POINTER(ALint), get_error=alGetError)
+@native_impl(ALenum, POINTER(ALint))
 def alGetListeneri(param, value):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value pointer given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value pointer given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALenum, POINTER(ALint), POINTER(ALint), POINTER(ALint), get_error=alGetError)
+@native_impl(ALenum, POINTER(ALint), POINTER(ALint), POINTER(ALint))
 def alGetListener3i(param, v1, v2, v3):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value pointer given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value pointer given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")
 
-@native_impl(ALenum, POINTER(ALint), get_error=alGetError)
+@native_impl(ALenum, POINTER(ALint))
 def alGetListeneriv(param, values):
-    return {
-        AL_NO_ERROR: None,
-        AL_INVALID_VALUE: "The value pointer given is not valid.",
-        AL_INVALID_ENUM: "The specified parameter is not valid.",
-        AL_INVALID_OPERATION: "There is no current context."
-    }
+    error = alGetError()
+    if error == AL_INVALID_VALUE:
+        raise ValueError("The value pointer given is not valid.")
+    elif error == AL_INVALID_ENUM:
+        raise ValueError("The specified parameter is not valid.")
+    elif error == AL_INVALID_OPERATION:
+        raise RuntimeError("There is no current context.")

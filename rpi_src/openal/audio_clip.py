@@ -3,12 +3,29 @@
 '''
 author: Jin Yuhan
 date: 2021-02-08 17:28:48
-lastTime: 2021-02-09 16:33:49
+lastTime: 2021-02-13 19:10:14
 '''
 
 from openal.al import *
 from os.path import basename
 import wave
+
+def load_from_file(file_path):
+    """从指定文件中加载一个音频。
+
+    Args:
+        file_path (str): 文件路径。
+
+    Returns:
+        AudioClip: 如果成功则返回一个音频对象，否则返回None。
+    """
+    try:
+        ext = file_path.split(".")[-1]
+        if ext == 'wav':
+            return WaveAudioClip(file_path)
+    except:
+        pass
+    return None
 
 class AudioClip(object):
     """表示一个音频。"""
@@ -23,15 +40,12 @@ class AudioClip(object):
         """初始化一个音频对象。
 
         Args:
-            name: 音频的名称。
-            channels: 音频的声道数。
-            frequency: 音频的采样频率（以赫兹为单位）。
-            length: 音频的长度（以秒为单位）。
-            bitrate: 音频的比特率。
-            data: 音频的字节数据。
-
-        Raises:
-            OpenALError: 异常。
+            name (str): 音频的名称。
+            channels (int): 音频的声道数。
+            frequency (int): 音频的采样频率（以赫兹为单位）。
+            length (float): 音频的长度（以秒为单位）。
+            bitrate (int): 音频的比特率。
+            data (bytes): 音频的字节数据。
         """
         self._name = name
         self._channels = channels
@@ -46,47 +60,31 @@ class AudioClip(object):
         alDeleteBuffers(1, self._buffer)
     
     @property
-    def name(self):
+    def name(self) -> str:
         """音频的名称。"""
         return self._name
 
     @property
-    def channels(self):
+    def channels(self) -> int:
         """音频的声道数。"""
         return self._channels
 
     @property
-    def frequency(self):
+    def frequency(self) -> int:
         """音频的采样频率（以赫兹为单位）。"""
         return self._frequency
 
     @property
-    def length(self):
+    def length(self) -> float:
         """音频的长度（以秒为单位）。"""
         return self._length
 
     @property
-    def buffer(self):
+    def buffer(self) -> ALuint:
         """获取音频的alBuffer。"""
         return self._buffer
 
-    @staticmethod
-    def create_from_file(file_path):
-        """从指定文件中创建一个音频对象。
-
-        Args:
-            file_path: 文件路径。
-
-        Returns:
-            如果创建成功则返回一个音频对象，否则返回None。
-        """
-        ext = file_path.split(".")[-1]
-        if ext == 'wav':
-            return _WaveAudioClip(file_path)
-        else:
-            return None
-
-class _WaveAudioClip(AudioClip):
+class WaveAudioClip(AudioClip):
     def __init__(self, file_path):
         with wave.open(file_path) as wavefp:
             name = basename(file_path)
