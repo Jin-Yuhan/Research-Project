@@ -3,7 +3,7 @@
 '''
 author: Jin Yuhan
 date: 2021-02-08 22:35:00
-lastTime: 2021-02-13 19:02:07
+lastTime: 2021-02-16 16:07:15
 '''
 
 from openal.al import *
@@ -12,6 +12,9 @@ class AudioListener(object):
     def __init__(self, **kwargs):
         self.position = kwargs.get("position", [0, 0, 0])
         self.orientation = kwargs.get("orientation", [0, 0, 1, 0, 1, 0])
+
+    def destroy(self):
+        print("Destroy audio listener.")
 
     @property
     def position(self) -> list:

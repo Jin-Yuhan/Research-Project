@@ -1,5 +1,4 @@
 {
-    "target_fps": 30,
     "arduino": {
         "platform:port": {
             "windows": "COM6",
@@ -17,7 +16,7 @@
         "orientation": [0, 0, 1, 0, 1, 0]
     },
     "audio_source": {
-        "asset:clip": "audio/hey.wav",
+        "asset:clip": "audio/tone5.wav",
         "source_relative": false,
         "position": [0, 0, 0],
         "direction": [0, 0, 1],
@@ -27,7 +26,7 @@
         "volume": 1.0
     },
     "tfmodel_common": {
-        "layers": [15, 20, 8],
+        "layers": [14, 20, 9],
         "activate_funcs": ["tf.nn.relu", "None"],
         "moving_average_decay": 0.99,
         "asset:model_dir": "model"
@@ -43,6 +42,10 @@
         "optimizer": "tf.train.AdamOptimizer",
         "asset:model_save_path": "model/model.ckpt"
     },
+    "target_fps": 30,
+    "min_sleep_seconds": 0.1,
+    "epsilon": 0.1,
+    "slerp_speed": 10,
     "asset:train_data_path": "data/train_data.json",
     "asset:test_data_path": "data/test_data.json"
 }

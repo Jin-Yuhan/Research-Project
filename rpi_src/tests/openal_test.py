@@ -3,7 +3,7 @@
 '''
 author: Jin Yuhan
 date: 2021-02-08 18:47:00
-lastTime: 2021-02-13 20:28:20
+lastTime: 2021-02-16 16:07:44
 '''
 
 import os
@@ -30,4 +30,6 @@ for theta in range(0, 360, 18):
     time.sleep(1)
 
 source.stop()
-del source, listener, al
+source.destroy()
+listener.destroy()
+al.destroy()

@@ -3,7 +3,7 @@
 '''
 author: Jin Yuhan
 date: 2021-02-08 17:28:20
-lastTime: 2021-02-13 19:18:20
+lastTime: 2021-02-16 16:06:34
 '''
 
 from openal.al import *
@@ -23,8 +23,11 @@ class AudioSource(object):
         self.pitch = kwargs.get("pitch", 1.0)
         self.volume = kwargs.get("volume", 1.0)
 
-    def __del__(self):
+    def destroy(self):
+        print("Destroy audio source.")
         alDeleteSources(1, self._source)
+        if self.clip:
+            self.clip.destroy()
 
     @property
     def clip(self):

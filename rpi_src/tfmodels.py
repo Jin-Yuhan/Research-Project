@@ -3,10 +3,11 @@
 '''
 author: Jin Yuhan
 date: 2021-02-09 20:30:49
-lastTime: 2021-02-13 21:32:38
+lastTime: 2021-02-16 18:02:59
 '''
 
 import tensorflow as tf
+import numpy as np
 
 class TFModel(object):
     def __init__(self, **kwargs):
@@ -132,25 +133,24 @@ class TestModel(TFModel):
         else:
             print("No checkpoint file found")
 
-
 class RuntimeModel(TFModel):
-    VALUE_MAP = {
+    DIRECTION_MAP = {
         0: [0, 0, 0],
         1: [1, 0, 0],
-        2: [1, 0, 1],
-        3: [0, 0, 1],
-        4: [-1, 0, 1],
+        2: [1 / np.sqrt(2), 0, -1 / np.sqrt(2)],
+        3: [0, 0, -1],
+        4: [-1 / np.sqrt(2), 0, -1 / np.sqrt(2)],
         5: [-1, 0, 0],
-        6: [-1, 0, -1],
-        7: [0, 0, -1],
-        8: [1, 0, -1]
+        6: [-1 / np.sqrt(2), 0, 1 / np.sqrt(2)],
+        7: [0, 0, 1],
+        8: [1 / np.sqrt(2), 0, 1 / np.sqrt(2)]
     }
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         ckpt = tf.train.get_checkpoint_state(self._model_dir)
         if ckpt and ckpt.model_checkpoint_path:
             self._x = tf.placeholder(tf.float32, [1, self._layers[0]], name="x-input")
-            self._prediction = tf.argmax(self.inference(self._x, None), 1)
+            self._result = tf.nn.softmax(self.inference(self._x, None))
             self._session = tf.Session()
 
             variable_averages = tf.train.ExponentialMovingAverage(self._moving_average_decay)
@@ -163,6 +163,7 @@ class RuntimeModel(TFModel):
     def close(self):
         self._session.close()
 
-    def run(self, data):
-        v = self._session.run(self._prediction, feed_dict={self._x: data})
-        return RuntimeModel.VALUE_MAP[v[0]]
+    def run(self, x):
+        result = self._session.run(self._result, feed_dict={self._x: x})[0]
+        index = np.argmax(result)
+        return RuntimeModel.DIRECTION_MAP[index], 10 * result[index]

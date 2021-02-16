@@ -3,7 +3,7 @@
 '''
 author: Jin Yuhan
 date: 2021-02-08 17:28:09
-lastTime: 2021-02-13 20:00:03
+lastTime: 2021-02-16 14:53:02
 '''
 
 class OpenAL(object):
@@ -23,7 +23,7 @@ class OpenAL(object):
         else:
             print("Initialize OpenAL.")
 
-    def __del__(self):
+    def destroy(self):
         import openal.alc as alc
         alc.alcMakeContextCurrent(None)
         

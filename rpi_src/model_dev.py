@@ -3,7 +3,7 @@
 '''
 author: Jin Yuhan
 date: 2021-01-25 19:14:14
-lastTime: 2021-02-13 21:40:38
+lastTime: 2021-02-16 16:14:17
 '''
 
 import configs
@@ -11,20 +11,21 @@ import json
 import os
 import random
 import tfmodels
-from async_receiver import AsyncHumanDataReceiver
+from async_receiver import AsyncDataReceiver
 
 class ModelData(object):
     def __init__(self, path):
         self.path = path
         self.labeled_data_list = None
-
-    def load(self):
+        
         if os.path.exists(self.path):
             with open(self.path, mode="r") as fp:
                 obj = json.load(fp)
                 if isinstance(obj, list):
                     self.labeled_data_list = obj
                     print("Load model data:", self.path)
+        if not self.labeled_data_list:
+            self.labeled_data_list = []
 
     def save(self):
         if self.labeled_data_list:
@@ -66,8 +67,7 @@ class ModelData(object):
 
 def make_data(data_path):
     model_data = ModelData(data_path)
-    model_data.load()
-    receiver = AsyncHumanDataReceiver(None, **configs.arduino)
+    receiver = AsyncDataReceiver(None, **configs.arduino)
     receiver.start()
     
     while receiver.active:
@@ -77,16 +77,16 @@ def make_data(data_path):
             print("The input value must be an integer.")
             continue
 
-        if value > 0 and value < 10:
+        if value > -1 and value < 9:
             data = receiver.latest_data
             if data:
-                label = [int(i == value) for i in range(1, 10)]
+                label = [int(i == value) for i in range(9)]
                 model_data.append(data, label)
                 print(model_data[-1])
         elif value == -1:
             break
         else:
-            print("The input value must be in [1,9], or equal -1.")
+            print("The input value must be in [0,8], or equal -1.")
     
     receiver.stop()
     model_data.save()
@@ -99,7 +99,6 @@ def make_data(data_path):
 
 def run_model(model_type, data_path, **kwargs):
     model_data = ModelData(data_path)
-    model_data.load()
     
     if len(model_data) > 0:
         print("Load %d data" % len(model_data))

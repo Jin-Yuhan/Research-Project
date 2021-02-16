@@ -3,7 +3,7 @@
 '''
 author: Jin Yuhan
 date: 2020-12-25 23:35:10
-lastTime: 2021-02-09 18:32:12
+lastTime: 2021-02-16 16:09:30
 '''
 
 from serial import Serial
@@ -101,17 +101,10 @@ class ArduinoDataReceiver(object):
         results = []
         reader = BinaryReader(package_buffer)
 
-        reader.read_float_many(3, results, 
-            lambda v: self.__round_float(v * 16 * self.gravity))
-
-        reader.read_float_many(3, results, 
-            lambda v: self.__round_float(v * 2000))
-
-        reader.read_float_many(3, results, 
-            lambda v: self.__round_float(v * 180))
-
-        reader.read_int_many(6, results, 
-            lambda v: float(v), signed=False)
+        reader.read_float_many(results, 3, lambda v: self.__round_float(v * 16 * self.gravity))
+        reader.read_float_many(results, 3, lambda v: self.__round_float(v * 2000))
+        reader.read_float_many(results, 3, lambda v: self.__round_float(v * 180))
+        reader.read_int_many(results, 6, lambda v: float(v), signed=False)
 
         return results
 

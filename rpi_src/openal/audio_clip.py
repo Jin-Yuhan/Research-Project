@@ -3,7 +3,7 @@
 '''
 author: Jin Yuhan
 date: 2021-02-08 17:28:48
-lastTime: 2021-02-13 19:10:14
+lastTime: 2021-02-16 15:02:55
 '''
 
 from openal.al import *
@@ -56,7 +56,8 @@ class AudioClip(object):
         format = AudioClip.FORMAT_MAP[(channels, bitrate)]
         alBufferData(self._buffer, format, data, len(data), frequency)
 
-    def __del__(self):
+    def destroy(self):
+        print("Destroy audio clip:", self.name)
         alDeleteBuffers(1, self._buffer)
     
     @property
